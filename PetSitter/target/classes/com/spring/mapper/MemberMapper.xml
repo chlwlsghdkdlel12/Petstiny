@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mapper.MemberMapper">
+
+	<resultMap type="MemberVO" id="memberResultMap">
+		<result property="MEMBER_ID" column="MEMBER_ID"/>
+		<result property="MEMBER_PW" column="MEMBER_PW"/>
+		<result property="MEMBER_NAME" column="MEMBER_ID"/>
+		<result property="MEMBER_TEL" column="MEMBER_ID"/>
+	</resultMap>
+	
+	<resultMap type="MemberUsinglistVO" id="UsingResultMap">
+		<result property="LIST_NUM" column="LIST_NUM" />
+		<result property="LIST_TYPE" column="LIST_TYPE" />
+		<result property="PETSITTER_NICKNAME" column="PETSITTER_NICKNAME" />
+		<result property="PETSITTER_NAME" column="PETSITTER_NAME" />
+		<result property="PETSITTER_TEL" column="PETSITTER_TEL" />
+		<result property="PETSITTER_SCORE" column="PETSITTER_SCORE" />
+		<result property="PETSITTER_PHOTO_PROFILE_FILE" column="PETSITTER_PHOTO_PROFILE_FILE" />
+		<result property="MEMBER_ID" column="MEMBER_ID" />
+		<result property="PETSITTER_ID" column="PETSITTER_ID" />
+		<result property="LIST_PRICE" column="LIST_PRICE" />
+		<result property="MERCHANT_UID" column="MERCHANT_UID" />
+	</resultMap>
+	
+	<select id ="memberIdFind" parameterType="MemberVO" resultType="String">
+		select MEMBER_ID from member where MEMBER_NAME = #{MEMBER_NAME} and MEMBER_TEL = #{MEMBER_TEL}
+	</select>
+	
+	<select id ="memberPwFind" parameterType="MemberVO" resultType="int">
+		select count(*) from member where MEMBER_ID = #{MEMBER_ID} and MEMBER_NAME = #{MEMBER_NAME} and MEMBER_TEL = #{MEMBER_TEL}
+	</select>
+	
+	<select id="memberCheck" parameterType="MemberVO" resultType="int">
+		select count(*) from member where MEMBER_ID = #{MEMBER_ID} and MEMBER_PW = #{MEMBER_PW}
+	</select>
+	
+	<select id="memberList" resultType="MemberVO" parameterType="MemberVO">
+		select * from member order by MEMBER_DATE desc
+	</select>
+	
+	<select id="selectMember" parameterType="String" resultType="MemberVO">
+		select * from member where MEMBER_ID=#{MEMBER_ID}
+	</select>
+	
+	<select id="getListCount" parameterType="String" resultType="int">
+		select count(*) from usinglist
+		where MEMBER_ID=#{MEMBER_ID}
+	</select>
+	
+	<select id="getListCount_month" parameterType="map" resultType="int">
+		select count(*) from usinglist
+		where MEMBER_ID=#{MEMBER_ID} and list_start_date >= trunc(add_months(sysdate, #{month}))
+	</select>
+	
+	<select id="getListCount_calendar" parameterType="map" resultType="int">
+		select count(*) from usinglist
+		where MEMBER_ID=#{MEMBER_ID} and (list_start_date between to_date(#{startdate}, 'YYYY-MM-DD') and to_date(#{enddate}, 'YYYY-MM-DD') or
+																			list_end_date between to_date(#{startdate}, 'YYYY-MM-DD') and to_date(#{enddate}, 'YYYY-MM-DD'))
+	</select>
+	
+	<select id="getUsingList_Member" parameterType="map" resultType="UsinglistVO">
+		<![CDATA[
+		select * 
+		from (select rownum as rnum, list_num, petsitter_id, petsitter_addr, member_id, 
+								 list_price, list_start_date, list_end_date, list_type, merchant_uid
+					from (select * 
+								from usinglist 
+								where MEMBER_ID=#{MEMBER_ID}
+								order by LIST_NUM desc))
+		]]>
+	</select>
+	
+	<select id="getUsingList_Member_ajax" parameterType="map" resultMap="UsingResultMap">
+		<![CDATA[
+		select list_num, member_id, petsitter_id, list_price, list_type, merchant_uid, petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, petsitter_address, petsitter_photo_profile_file 
+		from (select rownum as rnum, list_num, member_id, petsitter_id, petsitter_addr, list_price, list_type, merchant_uid,
+								 petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, 
+								 petsitter_address, petsitter_photo_profile_file
+					from (select list_num, member_id, petsitter_id, petsitter_addr, list_price, list_type, merchant_uid, 
+								 			 petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, 
+								 			 petsitter_address, petsitter_photo_profile_file
+								from usinglist natural join petsitter 
+								where MEMBER_ID=#{MEMBER_ID} order by LIST_NUM desc))
+		]]>
+	</select>
+	
+	<select id="getUsingList_Member_ajax_month" parameterType="map" resultMap="UsingResultMap">
+		<![CDATA[
+		select list_num, member_id, petsitter_id, list_price, list_type, merchant_uid, petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, petsitter_address, petsitter_photo_profile_file 
+		from (select rownum as rnum, list_num, member_id, petsitter_id, petsitter_addr, list_price, list_type, merchant_uid,  
+								 petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, 
+								 petsitter_address, petsitter_photo_profile_file
+					from (select list_num, member_id, petsitter_id, petsitter_addr, list_price, list_type, merchant_uid, 
+								 			 petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, 
+								 			 petsitter_address, petsitter_photo_profile_file
+								from usinglist natural join petsitter 
+								where MEMBER_ID=#{MEMBER_ID} and list_start_date >= trunc(add_months(sysdate, #{month}))
+								order by LIST_NUM desc))
+		]]>
+	</select>
+	
+	<select id="getUsingList_Member_month" parameterType="map" resultType="UsinglistVO">
+		<![CDATA[
+		select * 
+		from (select rownum as rnum, list_num, petsitter_id, petsitter_addr, member_id, 
+								 list_price, list_start_date, list_end_date, list_type, merchant_uid
+					from (select * 
+								from usinglist 
+								where MEMBER_ID=#{MEMBER_ID} and list_start_date >= trunc(add_months(sysdate, #{month})) 
+								order by LIST_NUM desc))
+		]]>
+	</select>
+	
+	<select id="getUsingList_Member_ajax_calendar" parameterType="map" resultMap="UsingResultMap">
+		<![CDATA[
+		select list_num, member_id, petsitter_id, list_price, list_type, merchant_uid, petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, petsitter_address, petsitter_photo_profile_file 
+		from (select rownum as rnum, list_num, member_id, petsitter_id, petsitter_addr, list_price, list_type, merchant_uid, 
+								 petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, 
+								 petsitter_address, petsitter_photo_profile_file
+					from (select list_num, member_id, petsitter_id, petsitter_addr, list_price, list_type, merchant_uid,  
+								 			 petsitter_nickname, petsitter_name, petsitter_tel, petsitter_score, 
+								 			 petsitter_address, petsitter_photo_profile_file
+								from usinglist natural join petsitter 
+								where MEMBER_ID=#{MEMBER_ID} and (list_start_date between to_date(#{startdate}, 'YYYY-MM-DD') and to_date(#{enddate}, 'YYYY-MM-DD') or
+											list_end_date between to_date(#{startdate}, 'YYYY-MM-DD') and to_date(#{enddate}, 'YYYY-MM-DD'))
+								order by LIST_NUM desc))
+		]]>
+	</select>
+	
+	<select id="getUsingList_Member_calendar" parameterType="map" resultType="UsinglistVO">
+		<![CDATA[
+		select * 
+		from (select rownum as rnum, list_num, petsitter_id, petsitter_addr, member_id, 
+								 list_price, list_start_date, list_end_date, list_type, merchant_uid
+					from (select * 
+								from usinglist 
+								where MEMBER_ID=#{MEMBER_ID} and (list_start_date between to_date(#{startdate}, 'YYYY-MM-DD') and to_date(#{enddate}, 'YYYY-MM-DD') or
+											list_end_date between to_date(#{startdate}, 'YYYY-MM-DD') and to_date(#{enddate}, 'YYYY-MM-DD'))
+								order by LIST_NUM desc)) 
+		]]>
+	</select>
+	
+	<insert id="insertMember" parameterType="MemberVO">
+		insert into member (MEMBER_ID,MEMBER_PW,MEMBER_NAME,MEMBER_TEL) values
+				(#{MEMBER_ID},#{MEMBER_PW},#{MEMBER_NAME},#{MEMBER_TEL})
+	</insert>
+	
+	<update id="memberPwUpdate" parameterType ="MemberVO">
+		update member set MEMBER_PW = #{MEMBER_PW} where MEMBER_ID =#{MEMBER_ID}
+	</update>
+	
+	<update id="updateMember" parameterType="MemberVO">
+		update member set MEMBER_NICKNAME=#{MEMBER_NICKNAME}, MEMBER_TEL=#{MEMBER_TEL}, MEMBER_PHOTO_FILE=#{MEMBER_PHOTO_FILE},
+		MEMBER_PW=#{MEMBER_PW}, MEMBER_GENDER=#{MEMBER_GENDER}, MEMBER_ADDRESS=#{MEMBER_ADDRESS} where MEMBER_ID=#{MEMBER_ID}
+	</update>
+	
+	<update id="updateMemberRank" parameterType="MemberVO">
+		update member set MEMBER_RANK=#{MEMBER_RANK}, MEMBER_COUNT=#{MEMBER_COUNT} where MEMBER_ID=#{MEMBER_ID}
+	</update>
+	
+	<delete id="deleteMember" parameterType="String">
+		delete from member where MEMBER_ID=#{MEMBER_ID}
+	</delete>
+	
+	<update id="suspendedMember" parameterType="MemberVO">
+		update member set member_rank = 'suspended' where member_id = #{MEMBER_ID}
+	</update>
+	
+	<update id="rollbackMember" parameterType="MemberVO">
+		update member set member_rank = 'Green' where member_id = #{MEMBER_ID}
+	</update>
+	
+	<update id="changeMember" parameterType="Map">
+		update member set member_rank = #{RANK} where member_id = #{MEMBER_ID}
+	</update>	
+
+</mapper>

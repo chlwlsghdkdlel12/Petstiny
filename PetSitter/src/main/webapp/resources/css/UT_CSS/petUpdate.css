@@ -1,0 +1,173 @@
+@charset "UTF-8";
+/* 언택 추가 CSS *//* 언택 추가 CSS *//* 언택 추가 CSS */
+/* 언택 추가 CSS *//* 언택 추가 CSS *//* 언택 추가 CSS */ 
+
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+body {
+  font-family: "Noto Sans KR", sans-serif !important;
+}
+
+h1 {
+  font-size: 60px;
+}
+
+p {
+  font-size: 20px;
+}
+
+
+
+/* top_box */
+	.top_box {
+	margin:10% 0 0 0 ;
+	}
+
+	.top_box_text1 {
+	font-size:70px;
+	color:#53DC98;
+	font-weight:bold;
+	}
+
+	.top_box_text2 {
+	font-size:16px;
+	color:rgb(94,94,94);
+	font-weight:bold;
+	}
+
+
+/* middle_box */
+	.middle_box {
+	margin:10% 0 10% 0;
+	}
+	  
+	.div_txt {
+	position:relative;
+	}
+	
+	.div_txt2 {
+	position:relative;
+	} 
+		 
+	.div_rd {
+	position:absolute; 
+	bottom:10px;
+	margin-left:29%;
+	}	 
+	
+	#div_rd1{
+	margin-left:33%;
+	}
+	
+	#checkbox1{
+	margin-left:45%;
+	}
+	  
+	#checkbox2{
+	margin-left:25%;
+	} 
+	  
+	.span_txt {
+	position:absolute; top:0; left:0;
+	color:black;
+	font-weight:bold;
+	font-size:18px;
+	}	  
+
+	.span_txt2 {
+	color:black; 
+	font-weight:bold;
+	font-size:18px;
+	margin-left:29%;
+	}
+	
+	.span_txt3{
+  color: black;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 20% 0 0 0;
+  margin-left: 85px;
+	}
+
+	.noimg {
+	border-top:1px solid white;
+	border-right: 1px solid white;
+	border-bottom: 1px solid white;
+	border-left: 1px solid white;
+	width:24%; /*19*/
+	height:266px;
+	margin:0 0.4em 0 0;
+	}
+	 
+	.input_txt {
+	width:103%;
+	height:40px;
+	text-align:left;
+	border-top:0px;
+	border-right:0px;
+	border-left:0px;
+	border-bottom:0.2em solid #53DC98;
+	color:#949494;
+	}	  
+	  
+	.btn_file {
+	width:19%;
+	margin:0 0.4em 0 0;
+	}		  
+
+	.btn_next{
+	margin:3% 0 0 14%;
+	width:50%;
+	height:100px;
+	background-color:white;
+	color:#53DC98;
+	font-size:70px; font-weight:bold;
+	border:0;
+	
+	}
+
+	#PET_BIRTH {
+	padding-left:16%;
+	}
+
+	.filebox input[type="file"] {
+	position: absolute; 
+	width: 1px;
+	height: 1px; 
+	padding: 0;
+	margin: -1px; 
+	overflow: hidden; 
+	clip:rect(0,0,0,0); 
+	border: 0; 
+	}
+
+	.upload {
+	width:24%;
+	text-align:center;
+	border:1px;
+	background-color:#53DC98;
+	color:#ffffff;
+	}
+
+	.div_img {
+	width:400px;
+	heigth:200px;
+	}
+
+	#icon1{
+	width:30%;
+	height:80px;
+	}
+
+input[type=text]
+
+
+input::placeholder {text-align:center;}
+input[type=text] {padding-left:10%; color:#5e5e5e; font-weight:bold; background-color: white;}
+input[type=number] {padding-left:10%; color:#5e5e5e; font-weight:bold;}
+
+/*인풋&버튼 클릭시 색상 없애기*/
+input:focus {outline:none;}
+button:focus {outline:none;} 
+
+/*인풋 색상 변경*/
+/* input:focus {outline:2px solid #d50000;} */

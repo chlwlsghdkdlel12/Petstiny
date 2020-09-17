@@ -1,0 +1,143 @@
+@charset "UTF-8"; 
+/* 언택 추가 CSS *//* 언택 추가 CSS *//* 언택 추가 CSS */
+/* 언택 추가 CSS *//* 언택 추가 CSS *//* 언택 추가 CSS */ 
+
+
+
+/**//**//**/
+/**//**//**/
+.center{
+border: 4px dotted #53dc98;
+margin-top:5%;
+margin-bottom:10%;
+width:460px;
+margin-left: 30px;
+}
+
+.center-head{
+margin-top:10%;
+}
+
+.head-1{
+text-align: center;
+color: #53DC98;
+font-weight: bold;
+letter-spacing:5px;
+margin-bottom: 5%;
+margin-left: 15px;
+}
+
+.center-ct1{
+margin-left:35px;	
+margin-top: 3%;
+}
+.center-hr{
+border: 1px dotted #53dc98;
+width: 300px;
+margin-left: 85px;
+}
+.info1{
+text-align: center;
+color: #525252;
+font-size: 18px;
+font-weight: 500;
+margin-left: 3%;
+}
+.info2{
+text-align: center;
+color: #525252;
+font-size: 18px;
+font-weight: 500;
+margin-left: 4%;
+}
+.center-ct2{
+margin-left:35px;
+margin-top: 3%;
+}
+
+.p00, .p0, .p1, .p2,
+.p3, .p4, .p5, .p6{
+display:flex;
+margin-left: 118px;
+}
+
+.p00 div, .p0 div, .p1 div, .p2 div,
+.p3 div, .p4 div, .p5 div, .p6 div{
+color:#53dc98;
+font-weight:bold;
+font-size:16px;
+}
+
+.p1 p, .p2 p,
+.p3 p, .p4 p, .p5 p, .p6 p{
+margin-left: 30px;
+color: #525252;
+font-weight: 400;
+}
+
+.d2{
+margin-left: 33px;	
+}
+
+.foot{
+margin-bottom: 30px;	
+}
+
+.p00 p, .p0 p{
+margin-left:30px;
+color: black;
+font-weight: bold;
+}
+
+.top-head{
+margin-top: 10%;
+margin-lef: 2%;
+text-align: center;
+color: black;
+font-size: 25px;
+font-weight: bold;	
+}
+
+.left{
+display:flex;
+margin-top: 130%;
+float: right;
+}
+
+.left-text{
+color: #525252;
+font-size: 23px;
+font-weight: bold;	
+margin-left:5px;
+}
+.left-btn{
+font-size: 45px;
+color: #525252;	
+}
+.l-2{
+line-height: 3.8;	
+}
+
+.right{
+display:flex;
+margin-top: 139.2%;
+margin-left: -25px;
+}
+.right-text{
+color: #525252;
+font-size: 23px;
+font-weight: bold;	
+}
+
+.right-btn{
+font-size:45px;
+color:#525252;
+}
+.r-2{
+margin-top: -5px;
+margin-left: 5px;
+line-height: 0;
+}
+
+
+

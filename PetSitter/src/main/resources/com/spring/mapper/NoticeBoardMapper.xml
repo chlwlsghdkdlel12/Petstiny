@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.spring.mapper.NoticeBoardMapper">
+
+	<resultMap type = "com.spring.petsitter.board.NoticeBoardVO" id="noticeboardResultMap">
+		<result property = "NOTICE_NUM" column ="NOTICE_NUM"/>
+		<result property = "NOTICE_ID" column ="NOTICE_ID"/>
+		<result property = "NOTICE_SUBJECT" column ="NOTICE_SUBJECT"/>
+		<result property = "NOTICE_CONTENT" column ="NOTICE_CONTENT"/>
+		<result property = "NOTICE_ORG_FILE" column = "NOTICE_ORG_FILE"/>
+		<result property = "NOTICE_UP_FILE" column = "NOTICE_UP_FILE"/>
+		<result property = "NOTICE_READCOUNT" column ="NOTICE_READCOUNT"/>
+		<result property = "NOTICE_DATE" column ="NOTICE_DATE"/>
+		<result property = "NOTICE_NICKNAME" column = "NOTICE_NICKNAME"/>
+	</resultMap>
+	
+	<select id="getBoardList" parameterType="HashMap" resultMap="noticeboardResultMap">
+	<![CDATA[
+		select NOTICE_NUM, NOTICE_NICKNAME, NOTICE_SUBJECT, NOTICE_CONTENT, NOTICE_ORG_FILE, NOTICE_UP_FILE, NOTICE_READCOUNT, NOTICE_DATE, NOTI
+		 	from (select rownum rnum, NOTICE_NUM, NOTICE_NICKNAME, NOTICE_SUBJECT, NOTICE_CONTENT, NOTICE_ORG_FILE, NOTICE_UP_FILE, NOTICE_READCOUNT, NOTICE_DATE, NOTI
+		 		from (select * from notice_board order by noti desc, NOTICE_NUM desc))
+		 			where rnum >= #{startrow} and rnum <= #{endrow}
+		]]>
+	</select>
+	
+	<select id="getListCount" resultType="int">
+		select count(*) from notice_board
+	</select>
+			
+	<select id="getDetail" parameterType="int" resultMap="noticeboardResultMap">
+		select * from notice_board where NOTICE_NUM = #{NOTICE_NUM}
+	</select>
+	
+	<update id="setReadCountUpdate" parameterType="int">
+		update notice_board set NOTICE_READCOUNT=NOTICE_READCOUNT+1 where NOTICE_NUM=#{NOTICE_NUM}
+	</update>
+	
+	<insert id = "boardInsert" parameterType="com.spring.petsitter.board.NoticeBoardVO">
+		<selectKey keyProperty="NOTICE_NUM" order="BEFORE" resultType="int"> 
+			select nvl(max(NOTICE_NUM), 0)+1 from notice_board
+		</selectKey>
+		<![CDATA[
+		insert into notice_board
+		(notice_num, notice_id, notice_subject, notice_content, notice_org_file, notice_up_file, notice_readcount, notice_date, notice_nickname, noti)
+		values (#{NOTICE_NUM},#{NOTICE_ID},#{NOTICE_SUBJECT},#{NOTICE_CONTENT},#{NOTICE_ORG_FILE},#{NOTICE_UP_FILE}, #{NOTICE_READCOUNT}, sysdate, #{NOTICE_NICKNAME}, #{NOTI})
+		]]>
+	</insert>
+	
+	<update id="boardModify" parameterType="com.spring.petsitter.board.NoticeBoardVO">
+		update notice_board set NOTICE_ID=#{NOTICE_ID}, NOTICE_SUBJECT=#{NOTICE_SUBJECT}, NOTICE_CONTENT=#{NOTICE_CONTENT} where notice_num=#{NOTICE_NUM}
+	</update>
+	
+	<delete id="boardDelete" parameterType="int">
+		delete from notice_board where notice_num=#{notice_num}
+	</delete>
+	
+	<select id="isBoardWriter" parameterType="HashMap" resultType="int">
+		select count(*) from notice_board where NOTICE_NUM=#{notice_num} and NOTICE_ID=#{notice_id}
+	</select>
+</mapper>

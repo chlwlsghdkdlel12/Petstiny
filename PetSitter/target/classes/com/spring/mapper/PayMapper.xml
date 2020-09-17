@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	 
+<mapper namespace="com.spring.mapper.PayMapper">
+
+	<select id="getPayList" resultType="com.spring.petsitter.pay.PayVO">
+		select * from pay order by start_date asc
+	</select>
+	
+	<update id="setPayConditionZero" parameterType="String">
+		update pay
+		set PAY_CONDITION = 0
+		where MERCHANT_UID=#{MERCHANT_UID}
+	</update>
+	
+	<update id="setPayConditionOne" parameterType="String">
+		update pay
+		set PAY_CONDITION = 1
+		where MERCHANT_UID=#{MERCHANT_UID}
+	</update>
+	
+	<update id="setPayConditionTwo" parameterType="String">
+		update pay
+		set PAY_CONDITION = 2
+		where MERCHANT_UID=#{MERCHANT_UID}
+	</update>
+
+	<select id="selectPay" parameterType="String" resultType="com.spring.petsitter.pay.PayVO">
+		select * from pay where MERCHANT_UID=#{MERCHANT_UID, jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insertPay" parameterType="com.spring.petsitter.pay.PayVO">
+		insert into pay(PAY_ID, PAY_AMOUNT, PETSITTER_ID, MERCHANT_UID, PAY_DATE, PAY_TYPE, START_DATE, END_DATE, PAY_POINT)
+		values(#{PAY_ID}, #{PAY_AMOUNT}, #{PETSITTER_ID}, #{MERCHANT_UID}, sysdate, #{PAY_TYPE}, to_date(#{START_DATE}, 'YYYY-MM-DD HH24:mi'), to_date(#{END_DATE}, 'YYYY-MM-DD HH24:mi'), #{PAY_POINT}) 
+	</insert>
+	
+	<update id="updatePay" parameterType="String">
+		update pay
+		set PAY_STATUS='결제 취소'
+		where MERCHANT_UID=#{MERCHANT_UID}
+	</update>
+	
+	<update id="memberAmount" parameterType="map">
+		update member set MEMBER_AMOUNT=MEMBER_AMOUNT + #{amount}, MEMBER_POINT=#{point} where MEMBER_ID=#{MEMBER_ID}
+	</update>
+	
+	<update id="memberAmountRemove" parameterType="map">
+		update member set MEMBER_AMOUNT=MEMBER_AMOUNT - #{amount}, MEMBER_POINT=MEMBER_POINT - #{point} where MEMBER_ID=#{MEMBER_ID}
+	</update>
+	
+	<update id="petsitterAmount" parameterType="map">
+		update petsitter set PETSITTER_AMOUNT=PETSITTER_AMOUNT + #{amount} where PETSITTER_ID=#{PETSITTER_ID}
+	</update>
+	
+	<update id="petsitterAmountRemove" parameterType="map">
+		update petsitter set PETSITTER_AMOUNT=PETSITTER_AMOUNT - #{amount} where PETSITTER_ID=#{PETSITTER_ID}
+	</update>
+</mapper>

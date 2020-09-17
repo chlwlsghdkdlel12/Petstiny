@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.spring.mapper.PetsitterQnaBoardMapper">
+
+	<resultMap type="com.spring.petsitter.board.PetsitterQnaBoardVO" id="petsitterqnaboardResultMap">
+		<result property = "PETSITTER_ID" column ="PETSITTER_ID"/>
+		<result property = "PETSITTER_NICKNAME" column = "PETSITTER_NICKNAME"/>
+		<result property = "MEMBER_ID" column ="MEMBER_ID"/>
+		<result property = "MEMBER_NICKNAME" column = "MEMBER_NICKNAME"/>
+		<result property = "PETSITTER_QNA_SUBJECT"  column = "PETSITTER_QNA_SUBJECT"/>
+		<result property = "PETSITTER_QNA_CONTENT" column ="PETSITTER_QNA_CONTENT"/>
+		<result property = "PETSITTER_QNA_DATE" column = "PETSITTER_QNA_DATE"/>
+		<result property = "PETSITTER_QNA_BNO" column = "PETSITTER_QNA_BNO"/>
+	</resultMap>
+
+	<insert id="pqboardInsert" parameterType="com.spring.petsitter.board.PetsitterQnaBoardVO">
+		<selectKey keyProperty="PETSITTER_QNA_BNO" order="BEFORE" resultType="int"> 
+			select nvl(max(PETSITTER_QNA_BNO), 0)+1 from Petsitter_Qna_Board
+		</selectKey>
+		<![CDATA[
+		insert into Petsitter_Qna_Board
+		(petsitter_id, petsitter_nickname, member_id, member_nickname, petsitter_qna_subject, petsitter_qna_content, petsitter_qna_date, petsitter_qna_bno)
+		values (#{PETSITTER_ID},#{PETSITTER_NICKNAME},#{MEMBER_ID},#{MEMBER_NICKNAME},#{PETSITTER_QNA_SUBJECT},#{PETSITTER_QNA_CONTENT}, sysdate, #{PETSITTER_QNA_BNO})
+		]]>
+	</insert>
+	
+	<select id="getDetail" parameterType="int" resultMap="petsitterqnaboardResultMap">
+		select * from petsitter_qna_board where PETSITTER_QNA_BNO= #{PETSITTER_QNA_BNO}
+	</select>
+	
+	<select id="getListCount" resultType="int">
+		select count(*) from petsitter_qna_board
+	</select>
+	
+	<select id="getpqBoardList" parameterType="HashMap" resultMap="petsitterqnaboardResultMap">
+	<![CDATA[
+	select PETSITTER_QNA_BNO, MEMBER_NICKNAME, PETSITTER_QNA_SUBJECT, PETSITTER_QNA_CONTENT, PETSITTER_QNA_DATE, PETSITTER_NICKNAME
+	 	from (select rownum rnum, PETSITTER_QNA_BNO, MEMBER_NICKNAME, PETSITTER_QNA_SUBJECT, PETSITTER_QNA_CONTENT, PETSITTER_QNA_DATE, PETSITTER_NICKNAME
+			from (select * from petsitter_qna_board order by PETSITTER_QNA_BNO desc))
+				where rnum >= #{startrow} and rnum <= #{endrow}
+	]]>
+	</select>
+</mapper>

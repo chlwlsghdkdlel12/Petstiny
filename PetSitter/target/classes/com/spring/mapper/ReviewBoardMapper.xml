@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	 
+<mapper namespace="com.spring.mapper.ReviewBoardMapper">
+
+	<resultMap type="com.spring.petsitter.board.ReviewBoardVO" id="ReviewBoardResultMap">
+		<result property="LIST_NUM" column="LIST_NUM" />
+		<result property="USINGLIST_NUM" column="USINGLIST_NUM" />
+		<result property="MEMBER_ID" column="MEMBER_ID" />
+		<result property="REVIEW_CONTENT" column="REVIEW_CONTENT" />
+		<result property="REVIEW_SCORE" column="REVIEW_SCORE" />
+		<result property="REVIEW_UP_PHOTO" column="REVIEW_UP_PHOTO" />
+		<result property="REVIEW_DATE" column="REVIEW_DATE" />
+		<result property="LIKE_COUNT" column="LIKE_COUNT" />
+		<result property="BOARD_TYPE" column="BOARD_TYPE" />
+		<result property="REVIEW_REFLY" column="REVIEW_REFLY" />
+		<result property="MEMBER_NICKNAME" column="MEMBER_NICKNAME" />
+		<result property="MEMBER_PHOTO" column="MEMBER_PHOTO" />
+		<result property="PETSITTER_NICKNAME" column="PETSITTER_NICKNAME" />
+		<result property="PETSITTER_ADDRESS" column="PETSITTER_ADDRESS" />
+		<result property="PETSITTER_PHOTO_PROFILE_FILE" column="PETSITTER_PHOTO_PROFILE_FILE" />
+		<result property="LIKE_ID" column="LIKE_ID" />
+		<result property="LIKE_NUM" column="LIKE_NUM" />
+		<result property="LIKE_TYPE" column="LIKE_TYPE" />
+
+	</resultMap>
+	
+
+	<select id="getReviewList" resultMap="ReviewBoardResultMap">
+    select R.RNUM, R.LIST_NUM, R.USINGLIST_NUM, R.MEMBER_ID, R.PETSITTER_ID, R.REVIEW_CONTENT,
+        R.REVIEW_SCORE, NVL(R.REVIEW_UP_PHOTO, 'N') REVIEW_UP_PHOTO, 
+        R.REVIEW_DATE , R.LIKE_COUNT, R.BOARD_TYPE, R.REVIEW_REFLY,
+        M.MEMBER_NICKNAME, NVL(M.MEMBER_PHOTO_FILE, 'N') MEMBER_PHOTO_FILE, P.PETSITTER_NICKNAME, P.PETSITTER_ADDRESS, 
+        NVL(P.PETSITTER_PHOTO_PROFILE_FILE, 'N') PETSITTER_PHOTO_PROFILE_FILE , NVL(L.LIKE_ID, 'N') LIKE_ID
+    from (select rownum as rnum, LIST_NUM, USINGLIST_NUM, MEMBER_ID, PETSITTER_ID, REVIEW_CONTENT,
+        REVIEW_SCORE, REVIEW_UP_PHOTO, REVIEW_DATE, LIKE_COUNT, BOARD_TYPE ,REVIEW_REFLY
+    from (select * from REVIEW_BOARD order by LIST_NUM desc)) R, MEMBER M, PETSITTER P, LIKE_COUNT L
+    WHERE R.MEMBER_ID = M.MEMBER_ID AND R.PETSITTER_ID = P.PETSITTER_ID AND R.LIST_NUM = L.LIKE_NUM
+    order by R.RNUM
+	</select>
+	
+	<select id="getReviewListCount" resultType="int">
+		select count(*) from REVIEW_BOARD
+	</select>
+	
+	<select id="getReviewListCount_member" resultType="int" parameterType="String">
+		select count(*) from REVIEW_BOARD where MEMBER_ID=#{MEMBER_ID}
+	</select>
+	
+	<select id="before_id" resultType="String">
+		select LIKE_ID from LIKE_COUNT WHERE LIKE_NUM=#{LIST_NUM} 
+	</select>
+	
+	<update id="updateLike_count" parameterType="HashMap">
+		UPDATE review_board SET LIKE_COUNT=#{LIKE_COUNT} WHERE LIST_NUM=#{LIST_NUM}
+	</update>
+	
+	<update id="updateLike_count2" parameterType="HashMap">
+		UPDATE LIKE_COUNT SET LIKE_ID = concat(#{before_id},#{LIKE_ID}) WHERE LIKE_NUM = #{LIST_NUM}
+	</update>
+	
+	<update id="updateLike_count3" parameterType="HashMap">
+		UPDATE LIKE_COUNT SET LIKE_ID = REPLACE(LIKE_ID, #{LIKE_ID},'') WHERE LIKE_NUM = #{LIST_NUM}
+	</update>
+	
+	<insert id="insertReview" parameterType="com.spring.petsitter.board.ReviewBoardVO" >
+		<selectKey keyProperty="LIST_NUM" order="BEFORE" resultType="int">
+			select nvl(max(LIST_NUM), 0)+1 from review_board
+		</selectKey>
+		insert into review_board(list_num, usinglist_num, member_id, petsitter_id, review_content, review_score, review_up_photo, review_date, like_count, BOARD_TYPE)
+		values(#{LIST_NUM}, #{USINGLIST_NUM}, #{MEMBER_ID}, #{PETSITTER_ID}, #{REVIEW_CONTENT}, #{REVIEW_SCORE}, #{REVIEW_UP_PHOTO, jdbcType=VARCHAR}, sysdate, 0, 'REVIEW_BOARD')
+	</insert>
+	
+	<select id="getLikeSelect" resultMap="ReviewBoardResultMap" parameterType="HashMap">
+    select R.LIST_NUM, R.USINGLIST_NUM, R.MEMBER_ID, R.PETSITTER_ID, R.LIKE_COUNT, R.BOARD_TYPE, 
+        NVL(L.LIKE_ID, 'N') LIKE_ID 
+        from review_board R, LIKE_COUNT L
+        WHERE R.LIST_NUM=#{LIST_NUM} AND L.LIKE_NUM=#{LIST_NUM}
+	</select>
+
+	<select id="usinglist_num_List_member" resultType="int" parameterType="String">
+		select usinglist_num from review_board where MEMBER_ID=#{MEMBER_ID}
+	</select>
+	
+	<select id="getReviewReportCountCheck" parameterType="HashMap" resultType="int">
+		select count(*) from report_article where member_id = #{sessionid} and member_num=#{num} and btype = #{boardType}
+	</select>		
+	
+	<select id="getReviewDetail" parameterType="int" resultType="ReviewBoardVO">
+		select * from REVIEW_BOARD where LIST_NUM = #{num}
+	</select>
+	
+	<insert id="reviwReportInsert" parameterType="ReviewBoardVO">
+		insert into report_article values (#{LIST_NUM},#{REPORT_REASON},#{MEMBER_ID},#{BOARD_TYPE}, 'N')
+	</insert>	
+	
+	
+</mapper>

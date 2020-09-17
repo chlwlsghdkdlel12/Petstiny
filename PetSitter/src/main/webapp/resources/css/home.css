@@ -1,0 +1,171 @@
+@charset "UTF-8";
+.map_wrap {
+	position:absolute;
+	top:10px;
+	left:10px;
+	overflow:hidden;
+	width:310px;
+	z-index:2;
+	height:100%;
+	max-height:410px;
+	margin:0;
+	padding:0;
+}
+
+.radius_border {
+	border-radius:8px;
+	z-index:1;
+}
+
+.custom_typecontrol {
+	position:absolute;
+	top:10px;
+	left:10px;
+	overflow:hidden;
+	margin:0;
+	padding:0;
+	z-index:1;
+	font-size:12px;
+	color:white;
+	z-index:1;
+}
+
+#div_output::-webkit-scrollbar {
+	width: 10px;
+}
+
+#div_output::-webkit-scrollbar-thumb {
+	background-color: #26bd72;
+	border-radius: 10px;
+}
+
+#div_output::-webkit-scrollbar-track {
+	background-color: white;
+	border-radius: 10px;
+	box-shadow: inset 0px 0px 5px white;
+}
+
+.pbtn01 {
+	background:#53dc98!important;
+	color: white!important;
+	border: 1px solid #53DC98!important;
+}   
+
+.pbtn02 {
+	background:#e67e22;
+	color: white;
+	margin: 0 0 0 5px;
+	border: 1px solid #e67e22;
+}      
+ 
+.pbtn02:hover {
+	color: #e67e22!important;
+	background: white;
+}
+ 
+.pbtn01:hover {
+	color: #53dc98!important;
+	font-weight: bold;
+	background: white!important;
+}
+   
+#output{
+	border: 1px solid white;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#output:hover{
+	background-color : #26bd72;
+}
+
+.ftco-cover-2 {
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	position: relative;
+	overflow: hidden;
+}
+
+.ftco-cover-2, .ftco-cover-2 .container > .row {
+	height: 80vh;
+}
+
+.ftco-cover-2 > .container {
+	position: relative;
+}
+  
+.ftco-cover-2.overlay2 {
+	position: relative;
+}
+
+.ftco-cover-2.overlay2:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: .15;
+	background: rgba(55,122,255,0)!important;
+	background: -moz-linear-gradient(45deg, #377aff 0%, #00d9ff 100%);
+	background: -webkit-gradient(left bottom, right top, color-stop(0%, #377aff), color-stop(100%, #00d9ff));
+	background: -webkit-linear-gradient(45deg, #377aff 0%, #00d9ff 100%);
+	background: -o-linear-gradient(45deg, #377aff 0%, #00d9ff 100%);
+	background: -ms-linear-gradient(45deg, #377aff 0%, #00d9ff 100%);
+	background: linear-gradient(45deg, #377aff 0%, #00d9ff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#377aff', endColorstr='#00d9ff', GradientType=1); 
+}
+  
+.ftco-cover-2.overlay2 h1 {
+	color: #fff;
+}
+  
+.ftco-cover-2.overlay2 p {
+	color: #fff;
+}
+  
+.ftco-cover-2.overlay2 p a {
+	color: #fff;
+	text-decoration: underline;
+	font-weight: 700;
+}
+    
+.ftco-cover-2.overlay2 p a:hover {
+	text-decoration: none;
+}
+      
+.ftco-cover-2.overlay2 form .form-control,
+.ftco-cover-2.overlay2 form .btn {
+	height: 55px;
+	border-radius: 4px;
+}
+
+.ftco-cover-2.overlay2 form .form-control {
+	padding-left: 20px;
+	padding-right: 20px;
+	border-color: transparent;
+	margin-right: 10px;
+}
+  
+.ftco-cover-2.overlay2 form .btn {
+	border-color: transparent; 
+}
+   
+#main-circle{
+	background-color:black; 
+	width : 400px; 
+	height : 400px; 
+	margin-right:50px;
+	border-radius:400px;
+}
+
+#petsitter_list{
+	position : absolute;
+	left: 500px;
+	top: 1500px;
+	background-color : #888888;
+	width : 100px;
+	height: 100px;
+	z-index : 100;
+}

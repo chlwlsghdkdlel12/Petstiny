@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.spring.mapper.MemberBoardMapper">
+
+	<resultMap type = "com.spring.petsitter.board.mboard.MemberBoardVO" id="memberboardResultMap">
+		<result property = "MEMBER_NUM" column ="MEMBER_NUM"/>
+		<result property = "MEMBER_ID" column ="MEMBER_ID"/>
+		<result property = "MEMBER_SUBJECT" column ="MEMBER_SUBJECT"/>
+		<result property = "MEMBER_CONTENT" column ="MEMBER_CONTENT"/>
+		<result property = "MEMBER_ORG_FILE" column = "MEMBER_ORG_FILE"/>
+		<result property = "MEMBER_UP_FILE" column = "MEMBER_UP_FILE"/>
+		<result property = "MEMBER_READCOUNT" column ="MEMBER_READCOUNT"/>
+		<result property = "MEMBER_DATE" column ="MEMBER_DATE"/>
+		<result property = "MEMBER_LIKECOUNT" column = "MEMBER_LIKECOUNT"/>
+		<result property = "MEMBER_NICKNAME" column = "MEMBER_NICKNAME"/>
+		<result property = "MEMBER_SECRET" column = "MEMBER_SECRET"/>
+	</resultMap>
+	
+	<resultMap type = "com.spring.petsitter.board.mboard.ReportArticleVO" id="reportArticleResultMap">
+		<result property="MEMBER_NUM" column="MEMBER_NUM" />
+		<result property="REPORT_REASON" column="REPORT_REASON" />
+		<result property="MEMBER_ID" column="MEMBER_ID" />
+		<result property="BTYPE" column="BTYPE" />
+	</resultMap>
+	
+	<resultMap type = "com.spring.petsitter.board.mboard.ReportReplyVO" id="reportReplyResultMap">
+		<result property="BNO" column="BNO" />
+		<result property="RNO" column="RNO" />
+		<result property="REPORT_REASON" column="REPORT_REASON" />
+		<result property="MEMBER_ID" column="MEMBER_ID" />
+		<result property="BTYPE" column="BTYPE" />		
+	</resultMap>
+	
+	<select id="getBoardList" parameterType="HashMap" resultMap="memberboardResultMap">
+	<![CDATA[
+		select MEMBER_NUM, MEMBER_NICKNAME, MEMBER_SUBJECT, MEMBER_CONTENT, MEMBER_ORG_FILE, MEMBER_UP_FILE, MEMBER_READCOUNT, MEMBER_DATE, MEMBER_LIKECOUNT, MEMBER_SECRET
+		 	from (select rownum rnum, MEMBER_NUM, MEMBER_NICKNAME, MEMBER_SUBJECT, MEMBER_CONTENT, MEMBER_ORG_FILE, MEMBER_UP_FILE, MEMBER_READCOUNT, MEMBER_DATE, MEMBER_LIKECOUNT, MEMBER_SECRET
+		 		from (select * from member_board order by MEMBER_NUM desc))
+		 			where rnum >= #{startrow} and rnum <= #{endrow}
+		]]>
+	</select>
+	
+	<select id="getListCount" resultType="int">
+		select count(*) from member_board
+	</select>
+			
+	<select id="getDetail" parameterType="int" resultMap="memberboardResultMap">
+		select * from member_board where MEMBER_NUM = #{MEMBER_NUM}
+	</select>
+	
+	<update id="setReadCountUpdate" parameterType="int">
+		update member_board set MEMBER_READCOUNT=MEMBER_READCOUNT+1 where MEMBER_NUM=#{MEMBER_NUM}
+	</update>
+	
+	<insert id = "boardInsert" parameterType="com.spring.petsitter.board.mboard.MemberBoardVO">
+		<selectKey keyProperty="MEMBER_NUM" order="BEFORE" resultType="int"> 
+			select nvl(max(MEMBER_NUM), 0)+1 from member_board
+		</selectKey>
+		<![CDATA[
+		insert into member_board
+		(member_num, member_id, member_subject, member_content, member_org_file, member_up_file, member_readcount, member_date, member_likecount, member_nickname, MEMBER_SECRET)
+		values (#{MEMBER_NUM},#{MEMBER_ID},#{MEMBER_SUBJECT},#{MEMBER_CONTENT},#{MEMBER_ORG_FILE},#{MEMBER_UP_FILE}, #{MEMBER_READCOUNT}, sysdate, 0, #{MEMBER_NICKNAME}, #{MEMBER_SECRET})
+		]]>
+	</insert>
+	
+	<update id="boardModify" parameterType="com.spring.petsitter.board.mboard.MemberBoardVO">
+		update member_board set MEMBER_SUBJECT=#{MEMBER_SUBJECT}, MEMBER_CONTENT=#{MEMBER_CONTENT} where member_num=#{MEMBER_NUM}
+	</update>
+	
+	<delete id="boardDelete" parameterType="int">
+		delete from member_board where member_num=#{member_num}
+	</delete>
+	
+	<select id="isBoardWriter" parameterType="HashMap" resultType="int">
+		select count(*) from member_board where MEMBER_NUM=#{member_num} and MEMBER_ID=#{member_id}
+	</select>
+	
+	<select id="getMemberName" parameterType="String" resultType="String">
+		select member_nickname from member, member_board where member.member_id = #{member_id}
+	</select>
+	
+	<!-- 신고 관련 기능들 -->
+	
+	<!-- 글 신고 -->
+	<insert id ="reportInsert" parameterType="com.spring.petsitter.board.mboard.ReportArticleVO">
+		insert into report_article (member_num, report_reason, member_id, btype)
+		values (#{MEMBER_NUM}, #{REPORT_REASON}, #{MEMBER_ID}, #{BTYPE})
+	</insert> 
+	
+	<!-- 리플 신고 -->
+	<insert id="reportReply" parameterType="com.spring.petsitter.board.mboard.ReportReplyVO">
+		insert into report_reply(BNO, RNO, REPORT_REASON, MEMBER_ID, btype)
+		values (#{BNO}, #{RNO}, #{REPORT_REASON}, #{MEMBER_ID}, #{BTYPE})
+	</insert>
+	
+	<!-- 글 신고 목록 조회 -->
+	<select id="getReportArticleList" resultMap="reportArticleResultMap">
+		select * from report_article order by member_num desc
+	</select>
+	
+	<!-- 리플 신고 목록 조회 -->
+	<select id="getReportReplyList" resultMap="reportReplyResultMap">
+		select * from report_reply order by bno desc
+	</select>
+</mapper>

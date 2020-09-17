@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.spring.mapper.PetMapper">
+
+	<insert id="insertPet" parameterType="PetVO">
+		insert into pet (MEMBER_ID, PET_CATEGORY, PET_KIND, PET_NAME, PET_WEIGHT, PET_SIZE, 
+
+										 PET_BIRTH, PET_GENDER, PET_NEUTERED, PET_POTTYTRAN, PET_VAOONE, PET_PHOTO, PET_DATE)
+			 
+		values(#{MEMBER_ID}, #{PET_CATEGORY}, #{PET_KIND}, #{PET_NAME}, #{PET_WEIGHT}, #{PET_SIZE}, #{PET_BIRTH},
+					 #{PET_GENDER}, #{PET_NEUTERED}, #{PET_POTTYTRAN}, #{PET_VAOONE}, #{PET_PHOTO}, SYSDATE)
+	</insert>
+
+	<select id="selectPet" parameterType="String" resultType="PetVO">
+		select * from PET where MEMBER_ID=#{MEMBER_ID}
+	</select>
+	
+	<select id="selectPet2" parameterType="String" resultType="PetVO">
+		select * from PET where MEMBER_ID=#{id} and PET_NAME=#{name}
+	</select>
+
+	<update id="updatePet" parameterType="PetVO">
+		update PET set PET_CATEGORY=#{PET_CATEGORY}, PET_KIND=#{PET_KIND}, PET_PHOTO=#{PET_PHOTO},
+		PET_WEIGHT=#{PET_WEIGHT}, PET_SIZE=#{PET_SIZE}, PET_GENDER=#{PET_GENDER}, PET_BIRTH=#{PET_BIRTH}, PET_NEUTERED=#{PET_NEUTERED},
+		PET_POTTYTRAN=#{PET_POTTYTRAN}, PET_VAOONE=#{PET_VAOONE} 
+		WHERE MEMBER_ID=#{MEMBER_ID}  AND PET_NAME=#{PET_NAME}
+	</update>
+
+	<delete id="deletePet" parameterType="PetVO">
+		delete from PET where MEMBER_ID=#{id} AND PET_NAME=#{name}
+	</delete>
+
+</mapper>

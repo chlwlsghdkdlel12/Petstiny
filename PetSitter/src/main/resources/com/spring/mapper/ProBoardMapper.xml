@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	 
+<mapper namespace="com.spring.mapper.ProBoardMapper">
+
+	<resultMap type="ProBoardVO" id="proBoardResultMap">
+		<result property="PRO_NUM" column="PRO_NUM" />
+		<result property="MEMBER_ID" column="MEMBER_ID" />
+		<result property="MEMBER_NICKNAME" column="MEMBER_NICKNAME" />
+		<result property="PRO_SUBJECT" column="PRO_SUBJECT" />
+		<result property="PRO_CONTENT" column="PRO_CONTENT" />
+		<result property="PRO_ORG_FILE" column="PRO_ORG_FILE" />
+		<result property="PRO_UP_FILE" column="PRO_UP_FILE" />
+		<result property="re_ref" column="re_ref" />
+		<result property="PRO_DATE" column="PRO_DATE" />
+		<result property="PRO_LIKECOUNT" column="PRO_LIKECOUNT" />
+		<result property="PRO_READCOUNT" column="PRO_READCOUNT" />
+		<result property="SECRET_CHECK" column="SECRET_CHECK" />
+		<result property="page2" column="page2" />
+		<result property="listcount2" column="listcount2" />
+		<result property="maxpage2" column="maxpage2" />
+		<result property="startpage2" column="startpage2" />
+		<result property="endpage2" column="endpage2" />
+		<result property="LIKE_ID" column="LIKE_ID" />
+		<result property="LIKE_NUM" column="LIKE_NUM" />
+
+		
+	</resultMap>
+
+
+	<select id="getProListCount" parameterType="HashMap" resultType="int">
+		select count(*) from PRO_BOARD
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="keyword != null and keyword != '' ">
+				<if test="searchType=='title'">
+					AND PRO_SUBJECT like '%' ||  #{keyword} || '%'
+				</if>
+				<if test="searchType=='content'">
+					AND PRO_CONTENT like '%' ||  #{keyword} || '%'
+				</if>
+				<if test="searchType=='reg_id'">
+					AND MEMBER_ID like '%' ||  #{keyword} || '%'
+				</if>
+      </if>
+	</trim>
+
+	</select>
+	
+	<select id="getProBoardList" parameterType="HashMap" resultMap="proBoardResultMap">
+		
+		select rnum, PRO_NUM, MEMBER_ID, MEMBER_NICKNAME, PRO_SUBJECT, PRO_CONTENT, PRO_ORG_FILE, PRO_UP_FILE, PRO_READCOUNT, PRO_DATE, PRO_LIKECOUNT, BOARD_TYPE , SECRET_CHECK
+		from (select rownum rnum,PRO_NUM, MEMBER_ID, MEMBER_NICKNAME, PRO_SUBJECT, PRO_CONTENT, PRO_ORG_FILE, PRO_UP_FILE, PRO_READCOUNT, PRO_DATE, PRO_LIKECOUNT, BOARD_TYPE, SECRET_CHECK 
+		     from (select * from PRO_BOARD 
+		     <trim prefix="WHERE" prefixOverrides="AND|OR">
+			     <if test="keyword != null and keyword != '' ">
+						 <if test="searchType=='title'">
+						 AND PRO_SUBJECT like '%' ||  #{keyword} || '%'
+						 </if>
+						 <if test="searchType=='Content'">
+						 AND PRO_CONTENT like '%' ||  #{keyword} || '%'
+					   </if>
+						 <if test="searchType=='reg_id'">
+						 AND MEMBER_ID like '%' ||  #{keyword} || '%'
+						 </if>
+	         </if>
+         </trim>
+		     order by PRO_NUM desc))
+		<![CDATA[where rnum>=#{startrow} and rnum<=#{endrow}]]>
+	</select>	
+	
+	
+		
+	<select id="nicknameFind" resultType="String" parameterType="ProBoardVO">
+			SELECT MEMBER_NICKNAME FROM MEMBER
+			WHERE MEMBER_ID = #{MEMBER_ID}
+	</select>
+	
+
+	<insert id="proboardInsert" parameterType="ProBoardVO">
+		<!-- <selectKey>는 insert구문에만 사용 가능 -->
+		<!-- order값은 "BEFORE|AFTER" 대문자 사용할것  BEFORE은 INSERT 하기전에 실행 AFTER은 한후-->
+		<!-- keyProperty="num"에서 num은 컬럼 명이다. -->
+		<selectKey keyProperty="PRO_NUM" order="BEFORE" resultType="int">
+			select nvl(max(PRO_NUM), 0)+1 from PRO_BOARD
+		</selectKey>
+		insert into PRO_BOARD values (#{PRO_NUM},#{MEMBER_ID}, #{MEMBER_NICKNAME},#{PRO_SUBJECT},#{PRO_CONTENT},
+		#{PRO_ORG_FILE, jdbcType=VARCHAR},#{PRO_UP_FILE, jdbcType=VARCHAR},
+		0 , sysdate, 0, 'PRO_BOARD',#{SECRET_CHECK})
+	</insert>	
+
+	<select id="getProDetail" parameterType="int" resultMap="proBoardResultMap">
+		select * from PRO_BOARD where PRO_NUM = #{num}
+	</select>
+
+	<update id="setProReadCountUpdate" parameterType="int">
+		update PRO_BOARD set PRO_READCOUNT=PRO_READCOUNT+1 where PRO_NUM=#{num}
+	</update>
+	
+	<select id="getProModifyForm" parameterType="int" resultMap="proBoardResultMap">
+		select * from PRO_BOARD where PRO_NUM = #{num}
+	</select>	
+
+	<update id="proModifyUpdate" parameterType="ProBoardVO">
+		update PRO_BOARD set PRO_SUBJECT = #{PRO_SUBJECT}, PRO_CONTENT = #{PRO_CONTENT}, 
+		PRO_ORG_FILE = #{PRO_ORG_FILE, jdbcType=VARCHAR}, PRO_UP_FILE = #{PRO_UP_FILE, jdbcType=VARCHAR}, 
+		SECRET_CHECK = #{SECRET_CHECK}
+		where PRO_NUM=#{PRO_NUM}
+	</update>	
+
+	<select id="isProBoardWriter" parameterType="HashMap" resultType="int">
+		select count(*) from PRO_BOARD where PRO_NUM=#{num} and MEMBER_ID=#{id}
+	</select>
+
+	<delete id="proBoardDelete" parameterType="int">
+		delete from PRO_BOARD where PRO_NUM=#{num}
+	</delete>
+
+	<delete id="proLikeDelete" parameterType="int">
+		delete from PRO_LIKE_COUNT where LIKE_NUM=#{num}
+	</delete>
+
+	<select id="getProReportCountCheck" parameterType="HashMap" resultType="int">
+		select count(*) from report_article where member_id = #{sessionid} and member_num=#{num} and BTYPE=#{boardType}
+	</select>
+	
+	<insert id="proReportInsert" parameterType="ProBoardVO">
+		insert into report_article values (#{PRO_NUM},#{REPORT_REASON},#{MEMBER_ID},#{BOARD_TYPE}, 'N')
+	</insert>
+	
+	<select id="getProReportReplyForm" parameterType="ProReplyVO" resultType="com.spring.petsitter.board.ProReplyVO">
+		select * from PROREPLY where bno = #{bno} and rno = #{rno}
+	</select>
+	
+	<select id="getProReportReplyCountCheck" parameterType="ProReplyVO" resultType="int">
+		select count(*) from report_reply where member_id = #{writer_id} and bno=#{bno} and rno=#{rno} and btype=#{b_type}
+	</select>	
+	
+	<insert id="proReportReplyInsert" parameterType="ProBoardVO">
+		insert into report_reply values (#{bno},#{rno},#{report_reason},#{writer_id},#{b_type}, 'N')
+	</insert>	
+	
+	<!-- 하단부터 댓글 Mapper.xml 부분  -->
+
+	<select id="nicknameFind02" resultType="String" parameterType="String">
+			SELECT MEMBER_NICKNAME FROM MEMBER
+			WHERE MEMBER_ID = #{gid}
+	</select>
+	
+	<select id="nicknameFind03" resultType="String" parameterType="String">
+			SELECT PETSITTER_NICKNAME FROM PETSITTER
+			WHERE PETSITTER_ID = #{gid}
+	</select>	
+	
+	<select id="readProReply" resultType="com.spring.petsitter.board.ProReplyVO">
+		select rno, content, writer_id, writer_nickname, regDate, b_type from PROREPLY where bno = #{bno} order by rno
+	</select>	
+	
+	<insert id="writeProReply" parameterType="com.spring.petsitter.board.ProReplyVO">
+		<selectKey keyProperty="rno" order="BEFORE" resultType="int">
+			select nvl(max(rno), 0)+1 from PROREPLY where bno = #{bno}
+		</selectKey>
+			
+ 	 INSERT INTO PROREPLY (BNO, RNO, CONTENT, WRITER_ID, WRITER_NICKNAME, REGDATE, B_TYPE)
+		VALUES(#{bno},#{rno},#{content, jdbcType=VARCHAR},#{writer_id, jdbcType=VARCHAR}, #{writer_nickname}, sysdate, 'PRO_BOARD') 
+	</insert>
+	
+	<update id="updateProReply" parameterType="com.spring.petsitter.board.ProReplyVO">
+		update PROREPLY set content = #{content} where bno = #{bno} and rno = #{rno}	
+	</update>
+	
+	<delete id="deleteProReply" parameterType="com.spring.petsitter.board.ProReplyVO">
+		delete from PROREPLY where bno = #{bno} and rno = #{rno}	
+	</delete>		
+	
+	<select id="proReplyCount" resultType="com.spring.petsitter.board.ProReplyVO" parameterType="int">
+		select nvl(count(*), 0) as reply_count from PROREPLY where bno = #{bno}
+	</select>
+	
+	
+	<select id="read_ProLikeCount" parameterType="int" resultMap="proBoardResultMap">
+		select PB.PRO_NUM, PB.PRO_LIKECOUNT, NVL(PL.LIKE_ID, 'N') LIKE_ID
+    from  pro_board PB, PRO_LIKE_COUNT PL
+    WHERE PRO_NUM = #{bno} AND PB.PRO_NUM = PL.LIKE_NUM
+	</select>
+
+	<select id="before_id" parameterType="ProBoardVO" resultType="String">
+		select LIKE_ID from PRO_LIKE_COUNT WHERE LIKE_NUM=#{PRO_NUM} 
+	</select>
+	
+	<update id="update_Pro_LikeCount1" parameterType="HashMap">
+		UPDATE pro_board SET PRO_LIKECOUNT=#{PRO_LIKECOUNT} WHERE PRO_NUM=#{PRO_NUM}
+	</update>	
+
+	<update id="update_Pro_LikeCount2" parameterType="HashMap">
+		UPDATE PRO_LIKE_COUNT SET LIKE_ID = concat(#{before_id},#{LIKE_ID}) WHERE LIKE_NUM = #{PRO_NUM}
+	</update>
+	
+	<update id="update_Pro_LikeCount3" parameterType="HashMap">
+		UPDATE PRO_LIKE_COUNT SET LIKE_ID = REPLACE(LIKE_ID, #{LIKE_ID},'') WHERE LIKE_NUM = #{PRO_NUM}
+	</update>		
+</mapper>
+

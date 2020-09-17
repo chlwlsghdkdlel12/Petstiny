@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	 
+<mapper namespace = "com.spring.mapper.PetsitterMapper">
+
+	<select id = "getSchedule" parameterType = "PetsitterVO" resultType="PetsitterVO">
+		select START_DATE,END_DATE from petsitter_schedule where PETSITTER_ID=#{PETSITTER_ID}
+	</select>
+
+	<select id = "petsitterIdFind" parameterType ="PetsitterVO" resultType="String">
+		select PETSITTER_ID from petsitter where PETSITTER_NAME = #{PETSITTER_NAME} and PETSITTER_TEL=#{PETSITTER_TEL} and PETSITTER_EMAIL = #{PETSITTER_EMAIL}
+	</select>
+	
+	<select id = "petsitterPwFind" parameterType ="PetsitterVO" resultType="int">
+		select count(*) from petsitter where PETSITTER_ID = #{PETSITTER_ID} and PETSITTER_NAME=#{PETSITTER_NAME} and PETSITTER_TEL = #{PETSITTER_TEL} and PETSITTER_EMAIL = #{PETSITTER_EMAIL}
+	</select>
+	
+	<resultMap type="PetsitterVO" id="thisMonthCountAmount">
+		<result property="m_count" column="count" />
+		<result property="m_amount" column="sum" />
+	</resultMap>
+	
+	<select id="petsitterCheck" parameterType = "PetsitterVO" resultType = "int">
+		select count(*) from petsitter where PETSITTER_ID = #{PETSITTER_ID} and PETSITTER_PW = #{PETSITTER_PW}
+	</select>
+	
+	<select id="petsitterList" resultType="PetsitterVO">
+		select * from petsitter order by PETSITTER_DATE
+	</select>
+	
+	<!-- 신규 추천 펫시터 -->
+	<select id="petsitterList_date" resultType="PetsitterVO">
+		<![CDATA[
+		select * from (select petsitter.*, rownum from petsitter order by petsitter_date desc) where rownum <= 3
+		]]>
+	</select>
+	
+	<select id="petsitter_thisMonth" resultType="PetsitterVO">
+		<![CDATA[
+		select * from (select petsitter.*, rownum 
+               from petsitter 
+               where petsitter_date >= trunc(add_months(sysdate, -1)) and petsitter_score != 0 and petsitter_count != 0
+               order by petsitter_score desc, petsitter_count desc, petsitter_amount desc)
+		where rownum = 1
+		]]>
+	</select>
+	
+	<select id="petsitter_thisMonth_score" resultType="PetsitterVO">
+		<![CDATA[
+		select * from (select petsitter.*, rownum
+									 from petsitter
+									 where petsitter_date >= trunc(add_months(sysdate, -1)) and petsitter_score != 0 and petsitter_count != 0
+									 order by petsitter_score desc)
+		where rownum = 1
+		]]>
+	</select>
+	
+	<select id="petsitter_thisMonth_count" resultType="PetsitterVO">
+		<![CDATA[
+		select * from (select petsitter.*, rownum
+									 from petsitter
+									 where petsitter_date >= trunc(add_months(sysdate, -1)) and petsitter_score != 0 and petsitter_count != 0
+									 order by petsitter_count desc, petsitter_amount desc)
+		where rownum = 1
+		]]>
+	</select>
+	
+	<select id = "petsitterNicknameCheck" parameterType = "PetsitterVO" resultType="int">
+		select count(*) from petsitter where PETSITTER_NICKNAME = #{PETSITTER_NICKNAME}
+	</select>
+	
+	<select id="selectPetsitter" parameterType="String" resultType="PetsitterVO">
+		select * from petsitter where PETSITTER_ID = #{PETSITTER_ID}
+	</select>
+	
+	<select id="this_month_countAmount" parameterType="String" resultMap="thisMonthCountAmount">
+		<![CDATA[
+		select sum(list_price) sum, count(*) count from usinglist where PETSITTER_ID=#{PETSITTER_ID} and list_start_date < sysdate
+		]]>
+	</select>
+	
+	<insert id = "petsitterSchedule" parameterType = "PetsitterScheduleVO">
+		insert into petsitter_schedule (PETSITTER_ID,START_DATE,END_DATE) 
+		values(#{PETSITTER_ID},#{START_DATE},#{END_DATE})
+	</insert>
+	
+	<insert id ="insertPetsitter" parameterType = "PetsitterVO">
+		insert into petsitter (PETSITTER_ID,PETSITTER_PW,PETSITTER_NAME,PETSITTER_TEL,PETSITTER_EMAIL,
+		PETSITTER_ADDRESS,PETSITTER_INTRODUCE,
+		PETSITTER_PRICE_30M,PETSITTER_PRICE_60M,PETSITTER_SERVICE_LIST,PETSITTER_PHOTO_UPFILE,
+		PETSITTER_PHOTO_PROFILE_FILE,PETSITTER_CERT_LIST,PETSITTER_PHOTO_CERT_FILE,
+		PETSITTER_PHOTO_HOME_FILE,PETSITTER_TYPE,PETSITTER_ADDRX,PETSITTER_ADDRY) values 
+		(#{PETSITTER_ID},#{PETSITTER_PW},#{PETSITTER_NAME},#{PETSITTER_TEL},#{PETSITTER_EMAIL}
+		,#{PETSITTER_ADDRESS},#{PETSITTER_INTRODUCE}
+		,#{PETSITTER_PRICE_30M},#{PETSITTER_PRICE_60M},#{PETSITTER_SERVICE_LIST},#{PETSITTER_PHOTO_UPFILE}
+		,#{PETSITTER_PHOTO_PROFILE_FILE},#{PETSITTER_CERT_LIST},#{PETSITTER_PHOTO_CERT_FILE},#{PETSITTER_PHOTO_HOME_FILE}
+		,#{PETSITTER_TYPE},#{PETSITTER_ADDRX},#{PETSITTER_ADDRY})
+	</insert>
+	
+	<update id = "petsitterPwUpdate" parameterType = "PetsitterVO">
+		update petsitter set PETSITTER_PW = #{PETSITTER_PW} where PETSITTER_ID = #{PETSITTER_ID}
+	</update>
+	
+	<update id = "petsitterUpdate" parameterType = "PetsitterVO">
+		update petsitter set PETSITTER_NICKNAME = #{PETSITTER_NICKNAME},PETSITTER_PW=#{PETSITTER_PW},PETSITTER_GENDER=#{PETSITTER_GENDER},PETSITTER_TEL=#{PETSITTER_TEL},
+		PETSITTER_EMAIL=#{PETSITTER_EMAIL},PETSITTER_ADDRESS=#{PETSITTER_ADDRESS},PETSITTER_INTRODUCE=#{PETSITTER_INTRODUCE},
+		PETSITTER_PRICE_30M=#{PETSITTER_PRICE_30M},PETSITTER_PRICE_60M=#{PETSITTER_PRICE_60M},PETSITTER_SERVICE_LIST=#{PETSITTER_SERVICE_LIST},
+		PETSITTER_PHOTO_UPFILE=#{PETSITTER_PHOTO_UPFILE},PETSITTER_PHOTO_PROFILE_FILE=#{PETSITTER_PHOTO_PROFILE_FILE},
+		PETSITTER_CERT_LIST=#{PETSITTER_CERT_LIST},PETSITTER_PHOTO_CERT_FILE=#{PETSITTER_PHOTO_CERT_FILE},PETSITTER_PHOTO_HOME_FILE=#{PETSITTER_PHOTO_HOME_FILE},
+		PETSITTER_TYPE=#{PETSITTER_TYPE},PETSITTER_PHOTO_APPEAL=#{PETSITTER_PHOTO_APPEAL},PETSITTER_ADDRX=#{PETSITTER_ADDRX},PETSITTER_ADDRY=#{PETSITTER_ADDRY},
+		PETSITTER_SAFEADDR=#{PETSITTER_SAFEADDR} where PETSITTER_ID=#{PETSITTER_ID}
+	</update>
+	
+	<update id = "reflyUpdate" parameterType = "ReviewBoardVO">
+		update review_board set review_refly = #{REVIEW_REFLY} where petsitter_id = #{PETSITTER_ID} and usinglist_num = #{USINGLIST_NUM}
+	</update>
+	
+	<update id = "petsitterApproval" parameterType = "PetsitterVO">
+		update petsitter set PETSITTER_RANK = 'Pro' where PETSITTER_ID = #{PETSITTER_ID}
+	</update>
+	
+	<update id="petsitterRefusal" parameterType="PetsitterVO">
+		update petsitter set PETSITTER_RANK = 'X' where PETSITTER_ID = #{PETSITTER_ID}
+	</update>
+	
+	<update id="petsitterscoreupdate" parameterType="map">
+		update petsitter set PETSITTER_SCORE=#{PETSITTER_SCORE}, PETSITTER_REVIEWCOUNT=PETSITTER_REVIEWCOUNT+1 where PETSITTER_ID=#{PETSITTER_ID}
+	</update>
+
+	<update id="petsitterCountRank" parameterType="PetsitterVO">
+		update petsitter set PETSITTER_COUNT=#{PETSITTER_COUNT}, PETSITTER_RANK=#{PETSITTER_RANK} where PETSITTER_ID=#{PETSITTER_ID}
+	</update>
+
+	<select id = "getReviewRating" parameterType = "HashMap" resultType="ReviewBoardVO">
+		select REVIEW_SCORE from REVIEW_BOARD where PETSITTER_ID = #{PETSITTER_ID}
+	</select>	
+
+	<select id="reviewList"  parameterType = "String" resultType="ReviewBoardVO">
+    select R.RNUM, R.LIST_NUM, R.USINGLIST_NUM, R.MEMBER_ID, R.PETSITTER_ID, R.REVIEW_CONTENT,
+        R.REVIEW_SCORE, NVL(R.REVIEW_UP_PHOTO, 'N') REVIEW_UP_PHOTO, 
+        R.REVIEW_DATE , R.LIKE_COUNT, R.BOARD_TYPE, R.REVIEW_REFLY,
+        M.MEMBER_NICKNAME, NVL(M.MEMBER_PHOTO_FILE, 'N') MEMBER_PHOTO_FILE, P.PETSITTER_NICKNAME, P.PETSITTER_ADDRESS, 
+        NVL(P.PETSITTER_PHOTO_PROFILE_FILE, 'N') PETSITTER_PHOTO_PROFILE_FILE , NVL(L.LIKE_ID, 'N') LIKE_ID
+    from (select rownum as rnum, LIST_NUM, USINGLIST_NUM, MEMBER_ID, PETSITTER_ID, REVIEW_CONTENT,
+        REVIEW_SCORE, REVIEW_UP_PHOTO, REVIEW_DATE, LIKE_COUNT, BOARD_TYPE ,REVIEW_REFLY
+    from (select * from REVIEW_BOARD  where PETSITTER_ID = #{petsitterid} order by LIST_NUM desc)) R, MEMBER M, PETSITTER P, LIKE_COUNT L
+    WHERE R.MEMBER_ID = M.MEMBER_ID AND R.PETSITTER_ID = P.PETSITTER_ID AND R.LIST_NUM = L.LIKE_NUM
+    order by R.RNUM
+	</select>
+
+	<update id="write_ReviewReply" parameterType="ReviewBoardVO">
+		update REVIEW_BOARD set REVIEW_REFLY = #{REVIEW_REFLY} where LIST_NUM = #{LIST_NUM} AND PETSITTER_ID = #{PETSITTER_ID}
+	</update>	
+	
+	<select id="galleryList"  parameterType = "String" resultType="CommunicationBoardVO">	
+	select * 
+	from (select rownum as rnum, USINGLIST_NUM, COMMUNICATION_PHOTO_FILE, UPLOAD_DATE, PETSITTER_ID
+	from (select * from COMMUNICATION_PHOTO_LIST where PETSITTER_ID = #{PETSITTER_ID} order by USINGLIST_NUM desc))
+	</select>	
+
+	<select id="readReviewLikeCount" parameterType="int" resultType="ReviewBoardVO">
+		select RB.LIST_NUM, RB.LIKE_COUNT, NVL(L.LIKE_ID, 'N') LIKE_ID
+    from  REVIEW_BOARD RB, LIKE_COUNT L
+    WHERE LIST_NUM = #{reviewListNum} AND RB.LIST_NUM = L.LIKE_NUM
+	</select>
+	
+	<delete id="deleteschedule" parameterType="PetsitterScheduleVO">
+		delete from petsitter_schedule where PETSITTER_ID=#{PETSITTER_ID} and START_DATE=#{START_DATE} and END_DATE=#{END_DATE}
+	</delete>
+</mapper>

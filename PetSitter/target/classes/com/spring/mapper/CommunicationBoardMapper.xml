@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	 
+<mapper namespace="com.spring.mapper.CommunicationBoardMapper">
+	
+	<resultMap type="com.spring.petsitter.board.CommunicationBoardVO" id="CommunicationResult">
+		<result property="BOARD_NUM" column="BOARD_NUM" />
+		<result property="USINGLIST_NUM" column="USINGLIST_NUM" />
+		<result property="BOARD_WRITER" column="BOARD_WRITER" />
+		<result property="MEMBER_ID" column="MEMBER_ID" />
+		<result property="PETSITTER_ID" column="PETSITTER_ID" />
+		<result property="BOARD_SUBJECT" column="BOARD_SUBJECT" />
+		<result property="BOARD_CONTENT" column="BOARD_CONTENT" />
+		<result property="BOARD_DATE" column="BOARD_DATE" />
+	</resultMap>
+	
+	<select id="getPhotoList" parameterType="int" resultType="String">
+		select COMMUNICATION_PHOTO_FILE 
+		from COMMUNICATION_PHOTO_LIST 
+		where USINGLIST_NUM=#{USINGLIST_NUM} and COMMUNICATION_PHOTO_FILE != 'N' 
+		order by UPLOAD_DATE desc
+	</select>
+	
+	<select id="getListCount" parameterType="map" resultType="int">
+		select count(*) from communication_board
+		where (MEMBER_ID=#{MEMBER_ID} or PETSITTER_ID=#{PETSITTER_ID}) and USINGLIST_NUM=#{USINGLIST_NUM}
+	</select>
+	
+	<select id="getQuesionList" parameterType="map" resultMap="CommunicationResult">
+		<![CDATA[
+		select * 
+		from (select rownum as rnum, communication_board.* 
+					from communication_board 
+					where (MEMBER_ID=#{MEMBER_ID} or PETSITTER_ID=#{PETSITTER_ID}) and USINGLIST_NUM=#{USINGLIST_NUM}
+					order by BOARD_NUM desc)
+		where rnum >= #{startrow} and rnum <= #{endrow}
+		]]>
+	</select>
+	
+	<select id="getUsingList_Member" parameterType="int" resultType="String">
+		select PETSITTER_ID from usinglist where LIST_NUM=#{LIST_NUM}
+	</select>
+	
+	<insert id="boardInsert" parameterType="com.spring.petsitter.board.CommunicationBoardVO">
+		<selectKey keyProperty="BOARD_NUM" order="BEFORE" resultType="int">
+			select nvl(max(BOARD_NUM), 0)+1 from communication_board
+		</selectKey>
+		insert into communication_board 
+		values(#{BOARD_NUM}, #{USINGLIST_NUM}, #{BOARD_WRITER}, #{MEMBER_ID}, #{PETSITTER_ID}, #{BOARD_SUBJECT}, #{BOARD_CONTENT}, sysdate, '답변 예정', #{BOARD_TYPE})
+	</insert>
+
+	<insert id="uploadPhoto" parameterType="com.spring.petsitter.board.CommunicationBoardVO">
+		insert into communication_photo_list
+		values(#{USINGLIST_NUM}, #{COMMUNICATION_PHOTO_FILE}, sysdate, #{PETSITTER_ID})
+	</insert>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.spring.mapper.PQReplyMapper" >
+		
+	<resultMap type = "com.spring.petsitter.board.mboard.ReportArticleVO" id="reportArticleResultMap">
+		<result property = "MEMBER_NUM" column ="MEMBER_NUM"/>
+		<result property = "REPORT_REASON" column = "REPORT_REASON" />	
+		<result property = "MEMBER_ID" column = "MEMBER_ID" />			
+		<result property = "BTYPE" column = "BTYPE" />
+		<result property ="PROCESSING" column = "PROCESSING"/>
+	</resultMap>
+
+<resultMap type = "com.spring.petsitter.board.mboard.ReportReplyVO" id="reportReplyResultMap">
+		<result property = "RNO" column ="RNO"/>
+		<result property = "BNO" column ="BNO"/>
+		<result property = "REPORT_REASON" column = "REPORT_REASON" />	
+		<result property = "MEMBER_ID" column = "MEMBER_ID" />			
+		<result property = "BTYPE" column = "BTYPE" />
+		<result property ="PROCESSING" column = "PROCESSING"/>
+	</resultMap>
+
+	<select id="replyCount" resultType="int">
+		select count(*) from pqReply
+	</select>
+
+	<select id="readReply" resultType="com.spring.petsitter.board.PQReplyVO">
+		select rno, content, writer_name, regDate,writer_rank from pqReply where bno = #{bno}
+	</select>	
+	
+	<insert id="writeReply" parameterType="com.spring.petsitter.board.PQReplyVO">
+		<selectKey keyProperty="rno" order="BEFORE" resultType="int">
+			select nvl(max(rno), 0)+1 from pqReply
+		</selectKey>
+	
+ 	 INSERT INTO pqReply (BNO, RNO, CONTENT, WRITER_ID, WRITER_NAME, REGDATE, WRITER_RANK)
+		VALUES(#{bno},#{rno},#{content},#{writer_id}, #{writer_name}, sysdate, #{writer_rank}) 
+	</insert>
+	
+	<update id="updateReply" parameterType="com.spring.petsitter.board.PQReplyVO">
+		update pqReply set content = #{content} where rno = #{rno}	
+	</update>
+	
+	<delete id="deleteReply" parameterType="int">
+		delete from pqReply where rno = #{rno}	
+	</delete>
+	
+	<update id="checkArticle" parameterType="com.spring.petsitter.board.mboard.ReportArticleVO">
+		update report_article set processing = 'Y' where member_num=#{num} and member_id=#{id} 
+	</update>
+	
+	<update id="checkArticle2" parameterType="com.spring.petsitter.board.mboard.ReportArticleVO">
+		update report_article set processing = 'N' where member_num=#{num} and member_id=#{id}
+	</update>
+	
+	<update id="checkReply" parameterType="com.spring.petsitter.board.mboard.ReportReplyVO">
+		update report_reply set processing = 'Y' where bno=#{bno} and rno=#{rno} and member_id = #{id}
+	</update>	
+	
+	<update id="checkReply2" parameterType="com.spring.petsitter.board.mboard.ReportReplyVO">
+		update report_reply set processing = 'N' where bno=#{bno} and rno=#{rno} and member_id = #{id}
+	</update>
+	
+	<select id="searchIdReportReply" parameterType="com.spring.petsitter.board.mboard.ReportReplyVO" resultType="int">
+		select count(*) from report_reply where member_id = #{id} and bno = #{bno} and rno = #{rno}
+	</select>
+	
+	<select id="searchIdReportArticle" parameterType="com.spring.petsitter.board.mboard.ReportArticleVO" resultType="int">
+		select count(*) from report_article where member_id = #{id} and member_num = #{num}
+	</select>
+	
+	<delete id="raDelete" parameterType="com.spring.petsitter.board.mboard.ReportArticleVO">
+		delete from report_article where member_id = #{id} and member_num = #{num}
+	</delete>
+	
+	<delete id="rrDelete" parameterType="com.spring.petsitter.board.mboard.ReportReplyVO">
+		delete from report_reply where bno = #{bno} and rno = #{rno} and member_id = #{id}
+	</delete>
+</mapper>

@@ -1,0 +1,17 @@
+=\=\=\=\=\=\=
+<<<<<<<=HEAD
+>>>>>>>=origin/Hong
+eclipse.preferences.version=1
+encoding//src/main/java/com/spring/petsitter/MemberController.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/PetController.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/PetsitterController.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/NoticeBoardController.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/NoticeBoardService.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/NoticeBoardServiceImpl.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/NoticeBoardVO.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/PQReplyVO.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/mboard/MReplyVO.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/mboard/MemberBoardController.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/mboard/MemberBoardService.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/mboard/MemberBoardServiceImpl.java=UTF-8
+encoding//src/main/java/com/spring/petsitter/board/mboard/MemberBoardVO.java=UTF-8

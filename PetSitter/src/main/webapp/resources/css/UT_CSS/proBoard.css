@@ -1,0 +1,125 @@
+@charset "UTF-8";
+/* 언택 추가 CSS *//* 언택 추가 CSS *//* 언택 추가 CSS */
+/* 언택 추가 CSS *//* 언택 추가 CSS *//* 언택 추가 CSS */ 
+
+/* top_box */
+	.top_box{
+	margin-top:10%;
+	margin-bottom:5%;
+	}
+	
+	.top_box_text1{
+	color:#53DC98;
+	font-weight:bold;
+	font-size:40px;
+	}
+	
+	.top_box_text2{
+	margin-left:1%;
+	}
+	
+	.img-fluid{
+	width:80%;
+	height:300px;
+	border-radius:10px;
+	margin-left:25%;
+	}	
+	
+	hr{
+	background-color:#949494;
+	width:70%;
+	}
+
+
+/* middle_box */
+	.middle_box{
+	margin-top:5%;
+	margin-bottom:5%;
+	}
+
+
+	.middle_text1{
+	color:#53DC98;
+	font-weight:bold;	
+	text-align:center;
+	margin-bottom:2%;
+	}
+	
+	.middle_body_text1{
+	color:#ffffff;
+	font-weight:bold;
+	font-size:20px;
+	text-align:center;
+	margin-bottom:3%;
+	}
+	
+	.middle_body_text2{
+	color:#ffffff;
+	text-align:center;
+	}
+	
+	
+	.expert_img{
+	width:100%;
+	height:255px;
+	}
+
+	.bottom_text1{
+	color:#53DC98;
+	font-weight:bold;	
+	text-align:center;
+	margin-bottom:2%;
+	}
+
+	.bottom_text2{
+	color:#53DC98;
+	font-weight:bold;	
+	text-align:right;
+	margin-bottom:2%;
+	}
+	
+	.register{
+	margin-left:1%;
+	color:#53DC98;
+	font-weight:bold;
+	}
+
+	.register2{
+	color:#ffffff;
+	border:1px solid #ffffff;
+	}
+
+
+/* bottom_box */
+	.bottom_box{
+	margin-top:5%;
+	margin-bottom:10%;
+	}
+	
+	.bottom_title{
+	margin-bottom:2%;
+	}
+
+	.PRO_SUBJECT {
+	font-size:20px;
+	}
+	
+	.PRO_CONTENT {
+	color:rgb(127, 127, 127);
+	}
+		
+	.PRO_TABLE {
+	width:550px; 
+	height:280px; 
+	border: 1px solid #ccc; 
+	float:left;
+	}
+	
+	th,td {
+	padding:15px;
+	}
+	
+	.read{
+	color:#53DC98;
+	font-weight:bold;
+	}

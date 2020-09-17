@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	 
+<mapper namespace = "com.spring.mapper.ReservationMapper">
+
+	<!-- 위탁 -->
+	<select id="petsitterList_We" parameterType ="String" resultType="PetsitterVO">
+		
+		<choose>
+			<!-- 위탁일시 -->
+    	<when test='btn_type == "WE"'>
+      	select * from petsitter where PETSITTER_TYPE like '%위탁%'
+      </when>
+      
+      <!-- 방문일시 -->
+      <when test='btn_type == "BANG"'>
+      	select * from petsitter where PETSITTER_TYPE like '%방문%' 
+      </when>
+		</choose>
+
+ 		<choose>
+ 			<!-- 지역( ? ) -->
+ 			<when test='btn_b == "N"'>
+ 				and (PETSITTER_ADDRESS like '%' || #{btn_a} || '%') 
+ 			</when>
+ 			
+ 			<!-- 지역( ? / ?) -->
+ 			<when test='btn_c == "N"' >
+ 				and (PETSITTER_ADDRESS like '%' || #{btn_a} || '%'  or PETSITTER_ADDRESS like '%' || #{btn_b} || '%')
+ 			</when>
+ 			
+ 			<!-- 지역( ? / ? / ?) -->
+ 			<when test='btn_c == "경남"'>
+ 				and (PETSITTER_ADDRESS like '%' || #{btn_a} || '%'  or PETSITTER_ADDRESS like '%' || #{btn_b} || '%'
+  			or PETSITTER_ADDRESS like '%' || #{btn_c} || '%')
+ 			</when>			
+ 		</choose>
+ 
+<!-- 조건이 한개인 경우 -->
+   	<if test='btn1 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%'
+  	</if>
+  	<if test='btn2 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%대형%'
+  	</if>
+  	<if test='btn3 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%마당%'
+  	</if>
+  	<if test='btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if>	
+
+<!-- 조건이 두개인 경우 -->
+    <if test='btn1 == "T" and btn2 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%' and PETSITTER_SERVICE_LIST like '%대형%'
+  	</if>
+  	<if test='btn1 == "T" and btn3 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%' and PETSITTER_SERVICE_LIST like '%마당%'
+  	</if>
+  	<if test='btn1 == "T" and btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%' and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if>
+  	<if test='btn2 == "T" and btn3 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%대형%' and PETSITTER_SERVICE_LIST like '%마당%'
+  	</if>
+  	<if test='btn2 == "T" and btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%대형%' and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if>
+  	<if test='btn3 == "T" and btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%마당%' and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if>
+  	
+<!-- 조건이 세개인 경우 -->
+  	<if test='btn1 == "T" and btn2 == "T" and btn3 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%' and PETSITTER_SERVICE_LIST like '%대형%'
+  		and PETSITTER_SERVICE_LIST like '%마당%'
+  	</if>
+  	<if test='btn1 == "T" and btn2 == "T" and btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%' and PETSITTER_SERVICE_LIST like '%대형%'
+  		and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if>
+  	<if test='btn1 == "T" and btn3 == "T" and btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%' and  PETSITTER_SERVICE_LIST like '%마당%'
+  		and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if>
+  	<if test='btn2 == "T" and btn3 == "T" and btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%대형%' and PETSITTER_SERVICE_LIST like '%마당%'
+  		and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if> 
+  	
+<!-- 조건이 네개인 경우 -->
+  	<if test='btn1 == "T" and btn2 == "T" and btn3 == "T" and btn4 == "T"'>
+  		and PETSITTER_SERVICE_LIST like '%픽업%' and PETSITTER_SERVICE_LIST like '%대형%'
+  		and PETSITTER_SERVICE_LIST like '%마당%' and PETSITTER_SERVICE_LIST like '%노견%'
+  	</if>
+  	
+
+		<choose>
+			<!-- 평점순 -->
+    	<when test='btn_g == "T"'>
+      	order by PETSITTER_SCORE DESC
+      </when>
+      
+      <!-- 최신순 -->
+      <otherwise>
+      	order by PETSITTER_DATE DESC 
+      </otherwise>
+		</choose>
+		
+	</select>
+</mapper>
+
